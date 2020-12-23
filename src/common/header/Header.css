@@ -17,3 +17,16 @@
 .header-container .MuiInput-underline:hover {
   border-bottom:2px solid #fff;
 }
+
+.ReactModal__Content--after-open{
+  width: 400px;
+  margin: auto;
+  top: 10% !important;
+  height: fit-content;  
+}
+.MuiAppBar-colorDefault{
+  background-color: white !important;
+}
+.MuiPaper-elevation4{
+  box-shadow: none !important;
+}
