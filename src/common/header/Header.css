@@ -1,0 +1,15 @@
+.header-container {
+  display: flex;
+  flex-wrap: wrap;  
+  align-items: center;
+  background-color: #253338;
+  padding: 10px;
+  justify-content: space-between;
+}
+
+.header-container .MuiInputBase-root {
+  background-color: #253338;
+  color: rgb(192, 191, 191);
+  height: 40px;
+  width: 300px;
+}
