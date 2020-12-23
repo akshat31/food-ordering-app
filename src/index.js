@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
-import AppRouter from './common/router'
+import AppRouter from "./common/router";
+import { AppProvider } from "./common/app-context";
 
-ReactDOM.render(<AppRouter />, document.getElementById("root"));
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchKey, setSearchKey] = useState("");
+  const [currentRoute, setCurrentRoute] = useState("/");
+
+  return (
+    <AppProvider
+      value={{
+        searchKey,
+        setSearchKey,
+        isLoggedIn,
+        setIsLoggedIn,
+        currentRoute,
+        setCurrentRoute
+      }}
+    >
+      <AppRouter />
+    </AppProvider>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById("root"));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

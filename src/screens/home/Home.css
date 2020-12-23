@@ -1,0 +1,26 @@
+.home-container {
+  display: flex;  
+  align-items: center;
+}
+.restaurant-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px;
+}
+.rating-btn {
+  background-color: #eacc5d;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px;
+  color: white;
+  font-size: 13px;
+}
+.rating-price {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; 
+  align-items: center; 
+}
+.home-container .MuiTypography-gutterBottom{
+  min-height: 70px
+}
