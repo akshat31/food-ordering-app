@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { FormControl, Input, InputLabel, Button } from "@material-ui/core";
 import "./Signup.css";
-import AppContext from "../../app-context";
 
 const Signup = () => {
   const history = useHistory();

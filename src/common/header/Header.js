@@ -7,7 +7,7 @@ import { Button, TextField } from "@material-ui/core";
 import AppContext from "../app-context";
 import Modal from "react-modal";
 import PropTypes from "prop-types";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -49,12 +49,6 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    width: 500
-  }
-}));
 
 const Header = () => {
   const { searchKey, setSearchKey } = useContext(AppContext);
@@ -64,10 +58,6 @@ const Header = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
-
-  const handleChangeIndex = index => {
-    setValue(index);
   };
 
   return (
