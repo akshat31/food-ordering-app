@@ -59,7 +59,6 @@ const useStyles = makeStyles(theme => ({
 const Header = () => {
   const { searchKey, setSearchKey } = useContext(AppContext);
   const [isOpen, setIsOpen] = useState(false);
-  const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
@@ -95,13 +94,7 @@ const Header = () => {
           Login
         </Button>
       </div>
-      <Modal
-        isOpen={true}
-        contentLabel="Minimal Modal Example"
-        style={{
-          width: "200px"
-        }}
-      >
+      <Modal isOpen={isOpen} onRequestClose={()=>setIsOpen(false)}>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
@@ -116,10 +109,10 @@ const Header = () => {
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <Login/>
+          <Login />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <Signup/>
+          <Signup />
         </TabPanel>
       </Modal>
     </>
