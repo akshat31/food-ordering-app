@@ -1,6 +1,5 @@
 .home-container {
-  display: flex;
-  justify-content: center;
+  display: flex;  
   align-items: center;
 }
 .restaurant-list {
@@ -21,4 +20,7 @@
   justify-content: space-between;
   width: 100%; 
   align-items: center; 
+}
+.home-container .MuiTypography-gutterBottom{
+  min-height: 70px
 }
