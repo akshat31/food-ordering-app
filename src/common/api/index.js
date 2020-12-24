@@ -21,3 +21,10 @@ export const login = data => {
     }
   });
 };
+
+export const createCustomer = data => {
+  return fetch(`${BASE_URL}/api/customer/signup`, {
+    method: "POST",
+    body: JSON.parse(data)
+  }).then(res => res.json());
+};
