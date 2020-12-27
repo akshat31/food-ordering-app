@@ -1,0 +1,32 @@
+.detail-container {
+    background-color: #e7e7e7;
+}
+
+.hotal-img {
+    padding: 20px;
+    height: 230px;
+    width: 350px;
+}
+
+.rate-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.name-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.rating-desc {
+    line-height: 12px;
+}
+
+.cart-list {
+    list-style-type: none;
+}
