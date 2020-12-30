@@ -32,6 +32,9 @@ export const login = data => {
 export const createCustomer = data => {
   return fetch(`${BASE_URL}/api/customer/signup`, {
     method: "POST",
-    body: JSON.parse(data)
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
   }).then(res => res.json());
 };
