@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const BASE_URL = "http://localhost:8080";
 
 export const getAllRestaurants = () => {
@@ -14,11 +12,20 @@ export const getRestaurantByName = name => {
 
 export const login = data => {
   let authorization =
-    "Basic " + window.btoa(`${data.contactNumber}:${data.password}`);
-  return axios.post(`${BASE_URL}/api/customer/login`, null, {
+    "Basic " + window.btoa(`${data.contactnumber}:${data.password}`);
+
+  return fetch(`${BASE_URL}/api/customer/login`, {
+    method: "POST",
     headers: {
+      "Content-Type": "application/json",
       authorization: authorization
     }
+  }).then(res => {
+    let token = res.headers.get("access-token");
+    if (token) {
+      sessionStorage.setItem("access-token", token);
+    }
+    return res.json();
   });
 };
 

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import { FormControl, Input, InputLabel, Button } from "@material-ui/core";
 import "./Signup.css";
 import { createCustomer } from "../../api";
 
-const Signup = () => {
-  const history = useHistory();
+const Signup = ({ onSignup }) => {
   const [customerDetails, setCustomerDetails] = useState({});
   const [error, setError] = useState({
     login: false,
@@ -14,7 +12,9 @@ const Signup = () => {
   });
 
   const signupHandler = () => {
-    createCustomer(customerDetails).then(response => {});
+    createCustomer(customerDetails).then(response => {
+      onSignup(customerDetails);
+    });
   };
 
   return (

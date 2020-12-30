@@ -1,6 +1,6 @@
 .header-container {
   display: flex;
-  flex-wrap: wrap;  
+  flex-wrap: wrap;
   align-items: center;
   background-color: #253338;
   padding: 10px;
@@ -15,18 +15,21 @@
 }
 
 .header-container .MuiInput-underline:hover {
-  border-bottom:2px solid #fff;
+  border-bottom: 2px solid #fff;
 }
 
-.ReactModal__Content--after-open{
+.ReactModal__Content--after-open {
   width: 400px;
   margin: auto;
   top: 10% !important;
-  height: fit-content;  
+  height: fit-content;
 }
-.MuiAppBar-colorDefault{
+.MuiAppBar-colorDefault {
   background-color: white !important;
 }
-.MuiPaper-elevation4{
+.MuiPaper-elevation4 {
   box-shadow: none !important;
+}
+.avatar-menu .MuiButton-root {
+  color: grey;
 }
