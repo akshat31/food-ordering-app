@@ -1,5 +1,4 @@
-import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from "react";
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -16,23 +15,20 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  button: {
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
-  actionsContainer: {
-    marginBottom: theme.spacing(2),
-  },
-  resetContainer: {
-    padding: theme.spacing(3),
-  },
-}));
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import { Divider } from "@material-ui/core";
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import CloseIcon from '@material-ui/icons/Close';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import './Checkout.css';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -72,46 +68,73 @@ function getSteps() {
 
 function getStepContent(step) {
   const [value, setValue] = React.useState(0);
-  const [payment, setPayment] = React.useState('COD');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const handlePayment = (e) => {
-    setPayment(e.target.payment);
-  };
+  const [flat, setflat] = React.useState("");
+  const [locality, setlocality] = React.useState("");
+  const [city, setcity] = React.useState("");
+  const [pincode, setpincode] = React.useState("");
+  const [payment, setPayment] = React.useState("COD");
 
   switch (step) {
     case 0:
       return (
         <div>
           <AppBar position="static">
-      <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-        <Tab label="EXISTING ADDRESS" {...a11yProps(0)} />
-        <Tab label="NEW ADDRESS" {...a11yProps(1)} />
-      </Tabs>
-    </AppBar>
-    <TabPanel value={value} index={0}>
-      ADDRESS
-    </TabPanel>
-    <TabPanel value={value} index={1}>
-      NEW ADDRESS
-    </TabPanel>
-  </div>
+            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+              <Tab label="EXISTING ADDRESS" {...a11yProps(0)} />
+              <Tab label="NEW ADDRESS" {...a11yProps(1)} />
+            </Tabs>
+          </AppBar>
+          <TabPanel value={value} index={0}>
+            ADDRESS
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <div className="CardStyle">
+              <form noValidate autoComplete="off" className="CardStyle">
+                <FormControl required >
+                  <InputLabel htmlFor="Flat">Flat / Building No.</InputLabel>
+                  <Input id="Flat" value={flat} onChange={e => setflat(e.target.value)} />
+                </FormControl>
+                <FormControl required >
+                  <InputLabel htmlFor="Locality">Locality</InputLabel>
+                  <Input id="Locality" value={locality} onChange={e => setlocality(e.target.value)} />
+                </FormControl>
+                <FormControl required >
+                  <InputLabel htmlFor="City">City</InputLabel>
+                  <Input id="City" value={city} onChange={e => setcity(e.target.value)} />
+                </FormControl>
+                <FormControl required className="formControl">
+                  <InputLabel htmlFor="showDate">Choose Show Date:</InputLabel>
+                  <Select></Select>
+                </FormControl>
+                <FormControl required >
+                  <InputLabel htmlFor="Pincode">Pincode</InputLabel>
+                  <Input id="Pincode" value={pincode} onChange={e => setpincode(e.target.value)} />
+                </FormControl><br />
+              </form>
+            </div>
+            <Button variant="contained" color="secondary" onClick="addAddressHandler">
+              SAVE ADDRESS
+              </Button>
+          </TabPanel>
+        </div>
       );
     case 1:
       return (
         <div>
           <FormControl component="fieldset">
-      <FormLabel component="legend">Select Mode of Payment</FormLabel>
-      <RadioGroup aria-label="payment" name="gender1" payment={payment} onChange={handlePayment}>
-        <FormControlLabel payment="COD" control={<Radio />} label="Cash on Delivery" />
-        <FormControlLabel payment="Wallet" control={<Radio />} label="Wallet" />
-        <FormControlLabel payment="NB" control={<Radio />} label="Net Banking" />
-        <FormControlLabel payment="Cards" control={<Radio />} label="Debit/Credit" />
-      </RadioGroup>
-    </FormControl>
+            <FormLabel component="legend">Select Mode of Payment</FormLabel>
+            <RadioGroup aria-label="payment" name="gender1" payment={payment} onChange={e => setPayment(e.target.payment)}>
+              <FormControlLabel payment="COD" control={<Radio />} label="Cash on Delivery" />
+              <FormControlLabel payment="Wallet" control={<Radio />} label="Wallet" />
+              <FormControlLabel payment="NB" control={<Radio />} label="Net Banking" />
+              <FormControlLabel payment="Cards" control={<Radio />} label="Debit/Credit" />
+            </RadioGroup>
+          </FormControl>
         </div>
       );
     default:
@@ -122,7 +145,6 @@ function getStepContent(step) {
 
 const Checkout = () => {
 
-  const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
 
@@ -138,9 +160,41 @@ const Checkout = () => {
     setActiveStep(0);
   };
 
+  const [snackPack, setSnackPack] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [messageInfo, setMessageInfo] = React.useState(undefined);
+
+  React.useEffect(() => {
+    if (snackPack.length && !messageInfo) {
+      // Set a new snack when we don't have an active one
+      setMessageInfo({ ...snackPack[0] });
+      setSnackPack((prev) => prev.slice(1));
+      setOpen(true);
+    } else if (snackPack.length && messageInfo && open) {
+      // Close an active snack when a new one is added
+      setOpen(false);
+    }
+  }, [snackPack, messageInfo, open]);
+
+  const handleClick = (message) => () => {
+    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const handleExited = () => {
+    setMessageInfo(undefined);
+  };
+
+
   return (
     <>
-      <div>
+      <div className="container">
         <div className="flex-containerDetails">
           <div className="leftDetails">
             <Stepper activeStep={activeStep} orientation="vertical">
@@ -149,12 +203,11 @@ const Checkout = () => {
                   <StepLabel>{label}</StepLabel>
                   <StepContent>
                     <Typography>{getStepContent(index)}</Typography>
-                    <div className={classes.actionsContainer}>
+                    <div>
                       <div>
                         <Button
                           disabled={activeStep === 0}
                           onClick={handleBack}
-                          className={classes.button}
                         >
                           Back
                         </Button>
@@ -162,7 +215,6 @@ const Checkout = () => {
                           variant="contained"
                           color="primary"
                           onClick={handleNext}
-                          className={classes.button}
                         >
                           {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                         </Button>
@@ -175,7 +227,7 @@ const Checkout = () => {
             {activeStep === steps.length && (
               <Paper square elevation={0} >
                 <Typography>View your order summary & place your order now!</Typography>
-                <Button onClick={handleReset} className={classes.button}>
+                <Button onClick={handleReset}>
                   Change
                 </Button>
               </Paper>
@@ -183,7 +235,43 @@ const Checkout = () => {
           </div>
         </div>
         <div className="rightDetails">
-          Summary
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                Summary
+              </Typography>
+              <Divider />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleClick('Order placed successfully! Your order ID is {orderID}.')}>
+                Place Order
+              </Button>
+              <Snackbar
+                key={messageInfo ? messageInfo.key : undefined}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                onExited={handleExited}
+                message={messageInfo ? messageInfo.message : undefined}
+                action={
+                  <React.Fragment>
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      onClick={handleClose}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </React.Fragment>
+                }
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>

@@ -1,0 +1,23 @@
+.CardStyle{
+    width: 400px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rightDetails{
+width: 20%
+}
+
+.container {
+    display: flex;
+}
+
+.flex-containerDetails {
+    width: 75%
+}
+
+.statusBar{
+    width: fit-content;
+}
