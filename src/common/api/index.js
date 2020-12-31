@@ -12,6 +12,12 @@ export const getRestaurantByName = name => {
   );
 };
 
+export const getRestaurantById = uuid => {
+  return fetch(`${BASE_URL}/api/restaurant/${uuid}`).then(res =>
+    res.json()
+  );
+};
+
 export const login = data => {
   let authorization =
     "Basic " + window.btoa(`${data.contactNumber}:${data.password}`);
