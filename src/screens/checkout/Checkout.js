@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -21,16 +22,34 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { Divider } from "@material-ui/core";
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import CloseIcon from '@material-ui/icons/Close';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import Avatar from '@material-ui/core/Avatar';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import StopIcon from '@material-ui/icons/Stop';
 import './Checkout.css';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+        backgroundColor: theme.palette.background.paper
+    },
+  gridList: {
+    flexWrap: 'nowrap',
+        transform: 'translateZ(0)',
+        width: '100%'
+    },
+}));
+
 function TabPanel(props) {
+
   const { children, value, index, ...other } = props;
   return (
     <div
@@ -79,6 +98,8 @@ function getStepContent(step) {
   const [pincode, setpincode] = React.useState("");
   const [payment, setPayment] = React.useState("COD");
 
+  const classes = useStyles();
+
   switch (step) {
     case 0:
       return (
@@ -89,8 +110,47 @@ function getStepContent(step) {
               <Tab label="NEW ADDRESS" {...a11yProps(1)} />
             </Tabs>
           </AppBar>
-          <TabPanel value={value} index={0}>
-            ADDRESS
+          <TabPanel value={value} index={0} className={classes.root}>
+          <GridList cols={3} className={classes.gridList}>
+          <GridListTile>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <span className='CheckBox'><CheckCircleIcon /></span>
+          </GridListTile>
+          <GridListTile>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <span className='CheckBox'><CheckCircleIcon /></span>
+          </GridListTile>
+          <GridListTile>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <span className='CheckBox'><CheckCircleIcon /></span>
+          </GridListTile>
+          <GridListTile>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <Typography>Jansi, 1603</Typography>
+            <span className='CheckBox'><CheckCircleIcon /></span>
+          </GridListTile>
+          </GridList>
           </TabPanel>
           <TabPanel value={value} index={1}>
             <div className="CardStyle">
@@ -239,7 +299,10 @@ const Checkout = () => {
             <CardContent>
               <Typography variant="h5" component="h2">
                 Summary
-              </Typography>
+              </Typography><br/>
+              <Avatar fontSize="small"><StopIcon /></Avatar><Typography>Item Name</Typography>
+              <Typography>Item Name</Typography>
+              <Typography component="h6">Restraunt Name</Typography>
               <Divider />
               <Button
                 variant="contained"
