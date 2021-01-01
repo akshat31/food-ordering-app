@@ -235,7 +235,7 @@ const Details = () => {
                       {itemList.length > 0
                         ? itemList.map((item, index) => {
                             return (
-                              <li>
+                              <li key={index}>
                                 <div className="container">
                                   <div className="row">
                                     <div className="col-lg-5 col-5 d-flex">
