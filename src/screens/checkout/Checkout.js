@@ -1,4 +1,5 @@
 import React from "react";
+import 'fontsource-roboto';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -42,9 +43,10 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper
     },
   gridList: {
-    flexWrap: 'nowrap',
+        flexWrap: 'nowrap',
         transform: 'translateZ(0)',
-        width: '100%'
+        width: '100%',
+        height: 350,
     },
 }));
 
@@ -96,7 +98,7 @@ function getStepContent(step) {
   const [locality, setlocality] = React.useState("");
   const [city, setcity] = React.useState("");
   const [pincode, setpincode] = React.useState("");
-  const [payment, setPayment] = React.useState("COD");
+  const [payment, setPayment] = React.useState("");
 
   const classes = useStyles();
 
@@ -112,7 +114,7 @@ function getStepContent(step) {
           </AppBar>
           <TabPanel value={value} index={0} className={classes.root}>
           <GridList cols={3} className={classes.gridList}>
-          <GridListTile>
+          <GridListTile cellHeight={350}>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
@@ -121,7 +123,7 @@ function getStepContent(step) {
             <Typography>Jansi, 1603</Typography>
             <span className='CheckBox'><CheckCircleIcon /></span>
           </GridListTile>
-          <GridListTile>
+          <GridListTile cellHeight={350}>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
@@ -130,7 +132,7 @@ function getStepContent(step) {
             <Typography>Jansi, 1603</Typography>
             <span className='CheckBox'><CheckCircleIcon /></span>
           </GridListTile>
-          <GridListTile>
+          <GridListTile cellHeight={350}>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
@@ -139,7 +141,7 @@ function getStepContent(step) {
             <Typography>Jansi, 1603</Typography>
             <span className='CheckBox'><CheckCircleIcon /></span>
           </GridListTile>
-          <GridListTile>
+          <GridListTile cellHeight={350}>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
@@ -297,14 +299,16 @@ const Checkout = () => {
         <div className="rightDetails">
           <Card>
             <CardContent>
-              <Typography variant="h5" component="h2">
+            <Typography variant="h5" component="h2">
                 Summary
-              </Typography><br/>
-              <Avatar fontSize="small"><StopIcon /></Avatar><Typography>Item Name</Typography>
-              <Typography>Item Name</Typography>
-              <Typography component="h6">Restraunt Name</Typography>
-              <Divider />
+              </Typography><br></br>
+              <Typography variant="subtitle1" component="h6">Restraunt Name</Typography><br></br>
+              <Avatar fontSize="small"><StopIcon /></Avatar><Typography color="textSecondary">Item Name</Typography>
+              <Typography color="textSecondary">Item Name</Typography><br></br>
+              <Divider /><br/>
+              <Typography>New Amount:</Typography><br></br>
               <Button
+                style={{"width" : "100%"}}
                 variant="contained"
                 color="primary"
                 onClick={handleClick('Order placed successfully! Your order ID is {orderID}.')}>
