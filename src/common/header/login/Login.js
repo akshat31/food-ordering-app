@@ -67,7 +67,8 @@ const Login = ({ onLogin }) => {
                 setError({
                   ...error,
                   login: false,
-                  contactNumber: false
+                  contactNumber: false,
+                  invalidcontactNumber:false
                 });
                 setContactNumber(event.target.value);
               }}

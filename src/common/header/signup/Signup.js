@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { FormControl, Input, InputLabel, Button } from "@material-ui/core";
 import "./Signup.css";
 import { createCustomer } from "../../api";
+import {
+  isValidMobileNumber,
+  isValidEmail,
+  isValidPassword
+} from "../../utilities";
 
 const Signup = ({ onSignup }) => {
   const [customerDetails, setCustomerDetails] = useState({});
@@ -12,8 +17,52 @@ const Signup = ({ onSignup }) => {
   });
 
   const signupHandler = () => {
-    createCustomer(customerDetails).then(response => {
-      onSignup(customerDetails);
+    if (
+      customerDetails &&
+      (!customerDetails.first_name ||
+        !customerDetails.email_address ||
+        !customerDetails.contact_number ||
+        !customerDetails.password)
+    ) {
+      setError({
+        ...error,
+        first_name: !customerDetails.first_name,
+        email_address: !customerDetails.email_address,
+        contact_number: !customerDetails.contact_number,
+        password: !customerDetails.password
+      });
+    } else if (!isValidMobileNumber(customerDetails.contact_number)) {
+      setError({
+        ...error,
+        invalidcontactNumber: true
+      });
+    } else if (!isValidEmail(customerDetails.email_address)) {
+      setError({
+        ...error,
+        invalid_email_address: true
+      });
+    } else if (!isValidPassword(customerDetails.password)) {
+      setError({
+        ...error,
+        invalid_password: true
+      });
+    } else
+      createCustomer(customerDetails).then(response => {
+        if (response.code) {
+          setError({
+            ...error,
+            login: response.message
+          });
+        } else {
+          onSignup(customerDetails);
+        }
+      });
+  };
+
+  const onInputChange = (value, dataLable) => {
+    setCustomerDetails({
+      ...customerDetails,
+      [dataLable]: value
     });
   };
 
@@ -31,12 +80,12 @@ const Signup = ({ onSignup }) => {
                 setError({
                   ...error,
                   login: false,
-                  contactNumber: false
+                  first_name: false
                 });
-                setCustomerDetails(event.target.value);
+                onInputChange(event.target.value, "first_name");
               }}
             />
-            {error.contactNumber && (
+            {error.first_name && (
               <span className="error-message">required</span>
             )}
           </FormControl>
@@ -47,12 +96,9 @@ const Signup = ({ onSignup }) => {
               aria-describedby="my-helper-text"
               value={customerDetails.last_name}
               onChange={event => {
-                setCustomerDetails(event.target.value);
+                onInputChange(event.target.value, "last_name");
               }}
             />
-            {error.contactNumber && (
-              <span className="error-message">required</span>
-            )}
           </FormControl>
           <FormControl>
             <InputLabel htmlFor="my-input">Email *</InputLabel>
@@ -64,13 +110,17 @@ const Signup = ({ onSignup }) => {
                 setError({
                   ...error,
                   login: false,
-                  contactNumber: false
+                  email_address: false,
+                  invalid_email_address: false
                 });
-                setCustomerDetails(event.target.value);
+                onInputChange(event.target.value, "email_address");
               }}
             />
-            {error.contactNumber && (
+            {error.email_address && (
               <span className="error-message">required</span>
+            )}
+            {error.invalid_email_address && (
+              <span className="error-message">Invalid Email</span>
             )}
           </FormControl>
           <FormControl>
@@ -84,12 +134,19 @@ const Signup = ({ onSignup }) => {
                 setError({
                   ...error,
                   login: false,
-                  password: false
+                  password: false,
+                  invalid_password: false
                 });
-                setCustomerDetails(event.target.value);
+                onInputChange(event.target.value, "password");
               }}
             />
             {error.password && <span className="error-message">required</span>}
+            {error.invalid_password && (
+              <span className="error-message">
+                Password must contain at least one capital letter, one small
+                letter, one number, and one special character
+              </span>
+            )}
           </FormControl>
           <FormControl>
             <InputLabel htmlFor="my-input">Contact No *</InputLabel>
@@ -101,20 +158,22 @@ const Signup = ({ onSignup }) => {
                 setError({
                   ...error,
                   login: false,
-                  contactNumber: false
+                  contact_number: false,
+                  invalidcontactNumber: false
                 });
-                setCustomerDetails(event.target.value);
+                onInputChange(event.target.value, "contact_number");
               }}
             />
-            {error.contactNumber && (
+            {error.contact_number && (
               <span className="error-message">required</span>
             )}
+            {error.invalidcontactNumber && (
+              <span className="error-message">
+                Contact No. must contain only numbers and must be 10 digits long
+              </span>
+            )}
           </FormControl>
-          {error.login && (
-            <span className="error-message">
-              Incorrect contactnumber and/or password
-            </span>
-          )}
+          {error.login && <span className="error-message">{error.login}</span>}
           <div className="btn-container">
             <Button
               variant="contained"
