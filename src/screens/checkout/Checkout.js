@@ -20,7 +20,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormLabel from '@material-ui/core/FormLabel';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { Divider } from "@material-ui/core";
 import Input from '@material-ui/core/Input';
@@ -31,7 +30,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 import Avatar from '@material-ui/core/Avatar';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import StopIcon from '@material-ui/icons/Stop';
@@ -45,8 +43,6 @@ const useStyles = makeStyles((theme) => ({
   gridList: {
         flexWrap: 'nowrap',
         transform: 'translateZ(0)',
-        width: '100%',
-        height: 350,
     },
 }));
 
@@ -93,12 +89,14 @@ function getStepContent(step) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  
+ 
 
   const [flat, setflat] = React.useState("");
   const [locality, setlocality] = React.useState("");
   const [city, setcity] = React.useState("");
   const [pincode, setpincode] = React.useState("");
-  const [payment, setPayment] = React.useState("");
+  const [payment, setPayment] = React.useState("COD");
 
   const classes = useStyles();
 
@@ -113,7 +111,7 @@ function getStepContent(step) {
             </Tabs>
           </AppBar>
           <TabPanel value={value} index={0} className={classes.root}>
-          <GridList cols={3} className={classes.gridList}>
+          <GridList cols={3} cellHeight={"auto"} className={classes.gridList}>
           <GridListTile cellHeight={350}>
             <Typography>Jansi, 1603</Typography>
             <Typography>Jansi, 1603</Typography>
@@ -155,35 +153,44 @@ function getStepContent(step) {
           </GridList>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <div className="CardStyle">
-              <form noValidate autoComplete="off" className="CardStyle">
+            <div>
+              <form noValidate autoComplete="off">
+              <div className="CardStyle">
                 <FormControl required >
                   <InputLabel htmlFor="Flat">Flat / Building No.</InputLabel>
                   <Input id="Flat" value={flat} onChange={e => setflat(e.target.value)} />
+                  <FormHelperText><span className="red">required</span></FormHelperText>
                 </FormControl>
                 <FormControl required >
                   <InputLabel htmlFor="Locality">Locality</InputLabel>
                   <Input id="Locality" value={locality} onChange={e => setlocality(e.target.value)} />
+                  <FormHelperText><span className="red">required</span></FormHelperText>
                 </FormControl>
                 <FormControl required >
                   <InputLabel htmlFor="City">City</InputLabel>
                   <Input id="City" value={city} onChange={e => setcity(e.target.value)} />
+                  <FormHelperText><span className="red">required</span></FormHelperText>
                 </FormControl>
                 <FormControl required className="formControl">
                   <InputLabel htmlFor="showDate">Choose Show Date:</InputLabel>
                   <Select></Select>
+                  <FormHelperText><span className="red">required</span></FormHelperText>
                 </FormControl>
                 <FormControl required >
                   <InputLabel htmlFor="Pincode">Pincode</InputLabel>
                   <Input id="Pincode" value={pincode} onChange={e => setpincode(e.target.value)} />
+                  <FormHelperText><span className="red">Pincode must contain only numbers and must be 6 digits long</span></FormHelperText>
                 </FormControl><br />
-              </form>
-            </div>
-            <Button variant="contained" color="secondary" onClick="addAddressHandler">
+                </div>
+                <Button variant="contained" color="secondary" onClick="addAddressHandler">
               SAVE ADDRESS
               </Button>
+              <FormHelperText><span className="red">required</span></FormHelperText>
+              </form>
+              </div>
           </TabPanel>
         </div>
+        
       );
     case 1:
       return (
@@ -297,13 +304,13 @@ const Checkout = () => {
           </div>
         </div>
         <div className="rightDetails">
-          <Card>
+          <Card className="summaryCard">
             <CardContent>
             <Typography variant="h5" component="h2">
                 Summary
               </Typography><br></br>
               <Typography variant="subtitle1" component="h6">Restraunt Name</Typography><br></br>
-              <Avatar fontSize="small"><StopIcon /></Avatar><Typography color="textSecondary">Item Name</Typography>
+              <Typography color="textSecondary">Item Name</Typography>
               <Typography color="textSecondary">Item Name</Typography><br></br>
               <Divider /><br/>
               <Typography>New Amount:</Typography><br></br>
