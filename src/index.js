@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import 'font-awesome/css/font-awesome.min.css';
 import "./index.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from "./serviceWorker";
 import AppRouter from "./common/router";
 import { AppProvider } from "./common/app-context";

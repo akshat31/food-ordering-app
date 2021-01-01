@@ -1,0 +1,82 @@
+.detail-container {
+    background-color: #e7e7e7;
+}
+
+.hotal-img {
+    padding: 20px 0px;
+    height: 230px;
+    width: 260px;
+}
+
+.rate-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.name-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.rating-desc {
+    line-height: 12px;
+}
+
+.cart-list {
+    list-style-type: none;
+}
+
+@media (max-width: 575.98px) {
+    .d-xs-flex {
+        display: flex;
+    }
+
+    .xs-flex-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .xs-width-90 {
+        width: 90%!important;
+        text-align: center;
+    }
+
+    .res-name {
+        text-align: center;
+        font-size: 26px;
+        font-weight: 400;
+    }
+
+    .locality-name {
+        text-align: center;
+        font-weight: 300;
+        text-transform: uppercase;
+    }
+
+    .xs-text-center {
+        text-align: center;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+}
+
+@media (min-width: 1200px) {
+
+}
+
