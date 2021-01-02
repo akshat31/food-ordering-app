@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { getAllRestaurants, getRestaurantByName } from "../../common/api";
 
@@ -20,6 +21,7 @@ const useStyles = makeStyles({
 
 const Home = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [restaurants, setRestaurants] = useState([]);
   const { searchKey } = useContext(AppContext);
 
@@ -34,6 +36,10 @@ const Home = () => {
   useEffect(() => {
     listRestaurants();
   }, []);
+
+  const handleDetail = (restaurantId) => {
+    history.push(`/restaurant/${restaurantId}`)
+  }
 
   const filterRestaurant = () => {
     getRestaurantByName(searchKey).then(response => {
@@ -52,7 +58,7 @@ const Home = () => {
           restaurants.map(restaurant => {
             return (
               <Card className={classes.root} key={restaurant.restaurant_name}>
-                <CardActionArea>
+                <CardActionArea onClick={() => handleDetail(restaurant.id)}>
                   <CardMedia
                     component="img"
                     alt="Contemplative Reptile"

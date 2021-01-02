@@ -1,24 +1,17 @@
-import React, { useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
-import {
-  FormControl,
-  Input,
-  InputLabel,
-  Button
-} from "@material-ui/core";
+import React, { useState } from "react";
+import { FormControl, Input, InputLabel, Button } from "@material-ui/core";
 import "./Login.css";
-import AppContext from "../../app-context";
 import { login } from "../../api";
+import { isValidMobileNumber } from "../../utilities";
 
-const Login = () => {
-  const { setIsLoggedIn } = useContext(AppContext);
-  const history = useHistory();
-  const [contactnumber, setContactNumber] = useState("");
-  const [password, setPassword] = useState("");
+const Login = ({ onLogin }) => {
+  const [contactnumber, setContactNumber] = useState("9962299089");
+  const [password, setPassword] = useState("Mani@1234");
   const [error, setError] = useState({
     login: false,
     contactNumber: false,
-    password: false
+    password: false,
+    invalidcontactNumber: false
   });
 
   const loginHandler = () => {
@@ -27,6 +20,11 @@ const Login = () => {
         ...error,
         contactNumber: !contactnumber,
         password: !password
+      });
+    } else if (!isValidMobileNumber(contactnumber)) {
+      setError({
+        ...error,
+        invalidcontactNumber: true
       });
     } else if (contactnumber && password) {
       setError({
@@ -38,8 +36,14 @@ const Login = () => {
         contactnumber,
         password
       }).then(response => {
-        history.push("/home");
-        setIsLoggedIn(true);
+        if (response.code) {
+          setError({
+            ...error,
+            login: true
+          });
+        } else {
+          onLogin(response);
+        }
       });
     } else {
       setError({
@@ -63,13 +67,17 @@ const Login = () => {
                 setError({
                   ...error,
                   login: false,
-                  contactNumber: false
+                  contactNumber: false,
+                  invalidcontactNumber:false
                 });
                 setContactNumber(event.target.value);
               }}
             />
             {error.contactNumber && (
               <span className="error-message">required</span>
+            )}
+            {error.invalidcontactNumber && (
+              <span className="error-message">Invalid Contact</span>
             )}
           </FormControl>
           <FormControl>
@@ -92,7 +100,7 @@ const Login = () => {
           </FormControl>
           {error.login && (
             <span className="error-message">
-              Incorrect contactnumber and/or password
+              This contact number has not been registered!
             </span>
           )}
           <div className="btn-container">
