@@ -1,53 +1,54 @@
-import React from "react";
-import 'fontsource-roboto';
-import { makeStyles } from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Box from '@material-ui/core/Box';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormLabel from '@material-ui/core/FormLabel';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { Divider } from "@material-ui/core";
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import CloseIcon from '@material-ui/icons/Close';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import Avatar from '@material-ui/core/Avatar';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import StopIcon from '@material-ui/icons/Stop';
-import './Checkout.css';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { useParams, useHistory } from "react-router-dom";
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
+import StepContent from "@material-ui/core/StepContent";
+import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Box from "@material-ui/core/Box";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormLabel from "@material-ui/core/FormLabel";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Divider from "@material-ui/core/Divider";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import CloseIcon from "@material-ui/icons/Close";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
+import Avatar from "@material-ui/core/Avatar";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import StopIcon from "@material-ui/icons/Stop";
+import { capitalizeFirstLetter } from "../../common/utils";
+import { getRestaurantById } from "../../common/api";
+import { makePreciseValue } from "../../common/utils";
+import "./Checkout.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-        backgroundColor: theme.palette.background.paper
-    },
+    backgroundColor: theme.palette.background.paper,
+  },
   gridList: {
-        flexWrap: 'nowrap',
-        transform: 'translateZ(0)',
-    },
+    flexWrap: "nowrap",
+    transform: "translateZ(0)",
+  },
 }));
 
 function TabPanel(props) {
-
   const { children, value, index, ...other } = props;
   return (
     <div
@@ -66,37 +67,40 @@ function TabPanel(props) {
   );
 }
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
 function getSteps() {
-  return ['Delivery', 'Payment'];
+  return ["Delivery", "Payment"];
 }
 
 function getStepContent(step) {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  
- 
 
-  const [flat, setflat] = React.useState("");
-  const [locality, setlocality] = React.useState("");
-  const [city, setcity] = React.useState("");
-  const [pincode, setpincode] = React.useState("");
-  const [payment, setPayment] = React.useState("COD");
+  const [ address, setAddress] = useState({
+      flat:'',
+      locality: '',
+      city: '',
+      state: '',
+      pincode: ''
+  });
+
+  const handleAddress = (e) => {
+    setAddress({
+      ...address,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const [payment, setPayment] = useState("COD");
 
   const classes = useStyles();
 
@@ -105,117 +109,194 @@ function getStepContent(step) {
       return (
         <div>
           <AppBar position="static">
-            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="simple tabs example"
+            >
               <Tab label="EXISTING ADDRESS" {...a11yProps(0)} />
               <Tab label="NEW ADDRESS" {...a11yProps(1)} />
             </Tabs>
           </AppBar>
           <TabPanel value={value} index={0} className={classes.root}>
-          <GridList cols={3} cellHeight={"auto"} className={classes.gridList}>
-          <GridListTile cellHeight={350}>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <span className='CheckBox'><CheckCircleIcon /></span>
-          </GridListTile>
-          <GridListTile cellHeight={350}>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <span className='CheckBox'><CheckCircleIcon /></span>
-          </GridListTile>
-          <GridListTile cellHeight={350}>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <span className='CheckBox'><CheckCircleIcon /></span>
-          </GridListTile>
-          <GridListTile cellHeight={350}>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <Typography>Jansi, 1603</Typography>
-            <span className='CheckBox'><CheckCircleIcon /></span>
-          </GridListTile>
-          </GridList>
+            <GridList cols={3} cellHeight={"auto"} className={classes.gridList}>
+              <GridListTile cellHeight={350}>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <span className="CheckBox">
+                  <CheckCircleIcon />
+                </span>
+              </GridListTile>
+              <GridListTile cellHeight={350}>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <span className="CheckBox">
+                  <CheckCircleIcon />
+                </span>
+              </GridListTile>
+              <GridListTile cellHeight={350}>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <span className="CheckBox">
+                  <CheckCircleIcon />
+                </span>
+              </GridListTile>
+              <GridListTile cellHeight={350}>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <Typography>Jansi, 1603</Typography>
+                <span className="CheckBox">
+                  <CheckCircleIcon />
+                </span>
+              </GridListTile>
+            </GridList>
           </TabPanel>
           <TabPanel value={value} index={1}>
             <div>
               <form noValidate autoComplete="off">
-              <div className="CardStyle">
-                <FormControl required >
-                  <InputLabel htmlFor="Flat">Flat / Building No.</InputLabel>
-                  <Input id="Flat" value={flat} onChange={e => setflat(e.target.value)} />
-                  <FormHelperText><span className="red">required</span></FormHelperText>
-                </FormControl>
-                <FormControl required >
-                  <InputLabel htmlFor="Locality">Locality</InputLabel>
-                  <Input id="Locality" value={locality} onChange={e => setlocality(e.target.value)} />
-                  <FormHelperText><span className="red">required</span></FormHelperText>
-                </FormControl>
-                <FormControl required >
-                  <InputLabel htmlFor="City">City</InputLabel>
-                  <Input id="City" value={city} onChange={e => setcity(e.target.value)} />
-                  <FormHelperText><span className="red">required</span></FormHelperText>
-                </FormControl>
-                <FormControl required className="formControl">
-                  <InputLabel htmlFor="showDate">Choose Show Date:</InputLabel>
-                  <Select></Select>
-                  <FormHelperText><span className="red">required</span></FormHelperText>
-                </FormControl>
-                <FormControl required >
-                  <InputLabel htmlFor="Pincode">Pincode</InputLabel>
-                  <Input id="Pincode" value={pincode} onChange={e => setpincode(e.target.value)} />
-                  <FormHelperText><span className="red">Pincode must contain only numbers and must be 6 digits long</span></FormHelperText>
-                </FormControl><br />
+                <div className="CardStyle">
+                  <FormControl required>
+                    <InputLabel htmlFor="Flat">Flat / Building No.</InputLabel>
+                    <Input
+                      id="Flat"
+                      name='flat'
+                      value={address.flat}
+                      onChange={handleAddress}
+                    />
+                    <FormHelperText className='invisible'>
+                      <span className="red">required</span>
+                    </FormHelperText>
+                  </FormControl>
+                  <FormControl required>
+                    <InputLabel htmlFor="Locality">Locality</InputLabel>
+                    <Input
+                      name="locality"
+                      value={address.locality}
+                      onChange={handleAddress}
+                    />
+                    <FormHelperText className='invisible'>
+                      <span className="red">required</span>
+                    </FormHelperText>
+                  </FormControl>
+                  <FormControl required>
+                    <InputLabel htmlFor="City">City</InputLabel>
+                    <Input
+                      name="city"
+                      value={address.city}
+                      onChange={handleAddress}
+                    />
+                    <FormHelperText className='invisible'>
+                      <span className="red">required</span>
+                    </FormHelperText>
+                  </FormControl>
+                  <FormControl required className="formControl">
+                    <InputLabel htmlFor="showDate">
+                      Choose State:
+                    </InputLabel>
+                    <Select />
+                    <FormHelperText className='invisible'>
+                      <span className="red">required</span>
+                    </FormHelperText>
+                  </FormControl>
+                  <FormControl required>
+                    <InputLabel htmlFor="Pincode">Pincode</InputLabel>
+                    <Input
+                      name="pincode"
+                      value={address.pincode}
+                      onChange={handleAddress}
+                    />
+                    <FormHelperText className='invisible'>
+                      <span className="red">
+                        Pincode must contain only numbers and must be 6 digits
+                        long
+                      </span>
+                    </FormHelperText>
+                  </FormControl>
+                  <br />
                 </div>
-                <Button variant="contained" color="secondary" onClick="addAddressHandler">
-              SAVE ADDRESS
-              </Button>
-              <FormHelperText><span className="red">required</span></FormHelperText>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick="addAddressHandler"
+                >
+                  SAVE ADDRESS
+                </Button>
+                <FormHelperText className='invisible'>
+                  <span className="red">required</span>
+                </FormHelperText>
               </form>
-              </div>
+            </div>
           </TabPanel>
         </div>
-        
       );
     case 1:
       return (
         <div>
           <FormControl component="fieldset">
             <FormLabel component="legend">Select Mode of Payment</FormLabel>
-            <RadioGroup aria-label="payment" name="gender1" payment={payment} onChange={e => setPayment(e.target.payment)}>
-              <FormControlLabel payment="COD" control={<Radio />} label="Cash on Delivery" />
-              <FormControlLabel payment="Wallet" control={<Radio />} label="Wallet" />
-              <FormControlLabel payment="NB" control={<Radio />} label="Net Banking" />
-              <FormControlLabel payment="Cards" control={<Radio />} label="Debit/Credit" />
+            <RadioGroup
+              aria-label="payment"
+              name="gender1"
+              payment={payment}
+              onChange={(e) => setPayment(e.target.payment)}
+            >
+              <FormControlLabel
+                payment="COD"
+                control={<Radio />}
+                label="Cash on Delivery"
+              />
+              <FormControlLabel
+                payment="Wallet"
+                control={<Radio />}
+                label="Wallet"
+              />
+              <FormControlLabel
+                payment="NB"
+                control={<Radio />}
+                label="Net Banking"
+              />
+              <FormControlLabel
+                payment="Cards"
+                control={<Radio />}
+                label="Debit/Credit"
+              />
             </RadioGroup>
           </FormControl>
         </div>
       );
     default:
-      return 'Unknown step';
+      return "Unknown step";
   }
 }
 
-
 const Checkout = () => {
-
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
+
+  // const { itemList, restaurant, totalItemCount, totalPrice } = useHistory();
+  const {
+    location: {
+      state: { itemList, restaurant, totalItemCount, totalPrice },
+    },
+  } = useHistory();
+  console.log("itemList", itemList);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -229,28 +310,31 @@ const Checkout = () => {
     setActiveStep(0);
   };
 
-  const [snackPack, setSnackPack] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
-  const [messageInfo, setMessageInfo] = React.useState(undefined);
+  const [snackPack, setSnackPack] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [messageInfo, setMessageInfo] = useState(undefined);
 
-  React.useEffect(() => {
-    if (snackPack.length && !messageInfo) {
-      // Set a new snack when we don't have an active one
-      setMessageInfo({ ...snackPack[0] });
-      setSnackPack((prev) => prev.slice(1));
-      setOpen(true);
-    } else if (snackPack.length && messageInfo && open) {
-      // Close an active snack when a new one is added
-      setOpen(false);
-    }
-  }, [snackPack, messageInfo, open]);
+  React.useEffect(
+    () => {
+      if (snackPack.length && !messageInfo) {
+        // Set a new snack when we don't have an active one
+        setMessageInfo({ ...snackPack[0] });
+        setSnackPack((prev) => prev.slice(1));
+        setOpen(true);
+      } else if (snackPack.length && messageInfo && open) {
+        // Close an active snack when a new one is added
+        setOpen(false);
+      }
+    },
+    [snackPack, messageInfo, open]
+  );
 
   const handleClick = (message) => () => {
     setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
   };
 
   const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
     setOpen(false);
@@ -260,12 +344,11 @@ const Checkout = () => {
     setMessageInfo(undefined);
   };
 
-
   return (
     <>
-      <div className="container">
-        <div className="flex-containerDetails">
-          <div className="leftDetails">
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-lg-9">
             <Stepper activeStep={activeStep} orientation="vertical">
               {steps.map((label, index) => (
                 <Step key={label}>
@@ -285,7 +368,7 @@ const Checkout = () => {
                           color="primary"
                           onClick={handleNext}
                         >
-                          {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                          {activeStep === steps.length - 1 ? "Finish" : "Next"}
                         </Button>
                       </div>
                     </div>
@@ -294,58 +377,116 @@ const Checkout = () => {
               ))}
             </Stepper>
             {activeStep === steps.length && (
-              <Paper square elevation={0} >
-                <Typography>View your order summary & place your order now!</Typography>
-                <Button onClick={handleReset}>
-                  Change
-                </Button>
+              <Paper square elevation={0}>
+                <Typography>
+                  View your order summary & place your order now!
+                </Typography>
+                <Button onClick={handleReset}>Change</Button>
               </Paper>
             )}
           </div>
-        </div>
-        <div className="rightDetails">
-          <Card className="summaryCard">
-            <CardContent>
-            <Typography variant="h5" component="h2">
-                Summary
-              </Typography><br></br>
-              <Typography variant="subtitle1" component="h6">Restraunt Name</Typography><br></br>
-              <Typography color="textSecondary">Item Name</Typography>
-              <Typography color="textSecondary">Item Name</Typography><br></br>
-              <Divider /><br/>
-              <Typography>New Amount:</Typography><br></br>
-              <Button
-                style={{"width" : "100%"}}
-                variant="contained"
-                color="primary"
-                onClick={handleClick('Order placed successfully! Your order ID is {orderID}.')}>
-                Place Order
-              </Button>
-              <Snackbar
-                key={messageInfo ? messageInfo.key : undefined}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-                onExited={handleExited}
-                message={messageInfo ? messageInfo.message : undefined}
-                action={
-                  <React.Fragment>
-                    <IconButton
-                      aria-label="close"
-                      color="inherit"
-                      onClick={handleClose}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </React.Fragment>
-                }
-              />
-            </CardContent>
-          </Card>
+          <div className="col-lg-3">
+            <Card className="summaryCard">
+              <CardContent>
+                <Typography variant="h5" component="h2">
+                  Summary
+                </Typography>
+                <Typography className="my-3" variant="p" component="p">
+                  {restaurant}
+                </Typography>
+                <ul className="cart-list p-0 mb-0">
+                  {itemList && itemList.length > 0
+                    ? itemList.map((item, index) => {
+                        return (
+                          <li key={index}>
+                            <div className="container">
+                              <div className="row">
+                                <div className="col-lg-5 col-5 d-flex">
+                                  <i
+                                    className="fa fa-stop-circle-o pt-1"
+                                    style={{
+                                      color:
+                                        item.item.item_type === "VEG"
+                                          ? "green"
+                                          : "red",
+                                    }}
+                                    aria-hidden="true"
+                                  />
+                                  <p className="text-muted ml-3 mb-0">
+                                    <small>
+                                      {capitalizeFirstLetter(
+                                        item.item.item_name
+                                      )}
+                                    </small>
+                                  </p>
+                                </div>
+                                <div className="col-lg-4 col-4 text-right">
+                                  <span className="px-2">{item.quantity}</span>
+                                </div>
+                                <div className="col-lg-3 col-3 p-0 text-right">
+                                  <p className="text-muted mb-0">
+                                    <small>
+                                      <i
+                                        className="fa fa-inr mr-1"
+                                        aria-hidden="true"
+                                      />
+                                      {makePreciseValue(item.totalItemPrice)}
+                                    </small>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })
+                    : null}
+                </ul>
+                <Divider className="my-3" />
+                <div className="d-flex justify-content-between mb-4">
+                  <Typography variant="p" component="h6">
+                    New Amount
+                  </Typography>
+                  <Typography variant="p" component="h6">
+                    <i className="fa fa-inr mr-1" aria-hidden="true" />
+                    {totalPrice}
+                  </Typography>
+                </div>
+                <Button
+                  style={{ width: "100%" }}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleClick(
+                    "Order placed successfully! Your order ID is {orderID}."
+                  )}
+                >
+                  Place Order
+                </Button>
+                <Snackbar
+                  key={messageInfo ? messageInfo.key : undefined}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  open={open}
+                  autoHideDuration={6000}
+                  onClose={handleClose}
+                  onExited={handleExited}
+                  message={messageInfo ? messageInfo.message : undefined}
+                  action={
+                    <React.Fragment>
+                      <IconButton
+                        aria-label="close"
+                        color="inherit"
+                        onClick={handleClose}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </React.Fragment>
+                  }
+                />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </>

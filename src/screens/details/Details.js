@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 // Material UI
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -30,11 +30,12 @@ import "./Details.css";
 
 const Details = () => {
   const { id } = useParams();
+  const history = useHistory();
   const [restaurant, setRestaurant] = useState({});
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [cartItem, setCartItem] = useState({
-    restaurant: null,
+    restaurant: restaurant.restaurant_name || '',
     itemList: [],
     totalPrice: 0,
     totalItemCount: 0,
@@ -62,12 +63,13 @@ const Details = () => {
 
   const addToCart = (item, category) => {
     const myCartItem = cartItem || {
-      restaurant: "resData",
+      restaurant: restaurant.restaurant_name || '',
       itemList: [],
       totalPrice: 0,
       totalItemCount: 0,
     };
     let findIndex = null;
+    myCartItem.restaurant = restaurant.restaurant_name || '';
     //If the item is new, not already added into the list, then insert newly
     let findItem = myCartItem.itemList.find((cartItemCurrent, index) => {
       if (cartItemCurrent.item.id === item.id) {
@@ -316,6 +318,10 @@ const Details = () => {
                   </div>
                   <CardActions className="p-0">
                     <Button
+                      onClick={() => { history.push({
+                        pathname: '/checkout',
+                        state: { ...cartItem }
+                      }) }}
                       className="m-3 w-100"
                       variant="contained"
                       color="primary"
