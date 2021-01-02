@@ -16,6 +16,10 @@ export const getRestaurantById = uuid => {
   );
 };
 
+export const commonGetFetch = (endPoint) => {
+  return fetch(`${BASE_URL}/api/${endPoint}`).then(res => res.json());
+}
+
 export const login = data => {
   let authorization =
     "Basic " + window.btoa(`${data.contactnumber}:${data.password}`);
