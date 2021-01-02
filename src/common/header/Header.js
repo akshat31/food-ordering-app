@@ -106,7 +106,7 @@ const Header = () => {
     setIsLoggedIn(false);
     sessionStorage.removeItem("userDetails");
     sessionStorage.removeItem("access-token");
-    history.push("/home");
+    history.push("/");
     handleClose();
   };
 
