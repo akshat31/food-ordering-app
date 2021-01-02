@@ -17,6 +17,9 @@
 .login-form > div {
   margin-top: 30px;
 }
-.btn-container{
+.btn-container {
   text-align: center;
+}
+.MuiMenu-paper {
+  top: 44px !important;
 }
