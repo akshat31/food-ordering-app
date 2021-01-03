@@ -100,13 +100,13 @@ const Checkout = () => {
   const [paymentType, setPaymentType] = useState({});
   const [formErrors, setFormErrors] = useState({});
   const [snackPack, setSnackPack] = useState([]);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [messageInfo, setMessageInfo] = useState(undefined);
   const [addressList, setAddressList] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState({});
   const [selectedPayment, setSelectedPayment] = useState({});
-  const [discount, setDiscount] = useState(0);
-  const [coupon, setCoupon] = useState({});
 
   const steps = ["Delivery", "Payment"];
   const {
@@ -155,7 +155,8 @@ const Checkout = () => {
   };
 
   const handleClick = message => () => {
-    setSnackPack(prev => [...prev, { message, key: new Date().getTime() }]);
+    setSnackBarMessage(message);
+    setSnackBarOpen(true);
   };
 
   const handleClose = (event, reason) => {
@@ -450,7 +451,6 @@ const Checkout = () => {
     let payload = {
       address_id: selectedAddress.id,
       bill: totalPrice,
-      discount: discount,
       item_quantities: itemList.map(item => {
         return {
           item_id: item.item.id,
@@ -461,19 +461,18 @@ const Checkout = () => {
       payment_id: selectedPayment.id,
       restaurant_id: restaurantID
     };
-    if (discount > 0) {
-      payload["discount"] = discount;
-      payload["coupon_id"] = coupon.id;
-    }
 
-    createOrder(payload).then(response => {
+    createOrder(payload).then(response => {      
       if (response.code) {
-        handleClick(response.message);
+        setSnackBarMessage(response.message);
+      } else if (response.error) {
+        setSnackBarMessage(response.error);
       } else {
-        handleClick(
+        setSnackBarMessage(
           `Order placed successfully! Your order ID is ${response.id}.`
         );
       }
+      setSnackBarOpen(true);
     });
   };
   return (
@@ -621,6 +620,19 @@ const Checkout = () => {
             </Card>
           </div>
         </div>
+        <Snackbar
+          key={"snack"}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          autoHideDuration={3000}
+          open={snackBarOpen}
+          onClose={() => setSnackBarOpen(false)}
+          message={<span id="message-id">{snackBarMessage}</span>}
+          action={
+            <IconButton color="inherit">
+              <CloseIcon onClick={() => setSnackBarOpen(false)} />
+            </IconButton>
+          }
+        />
       </div>
     </>
   );
