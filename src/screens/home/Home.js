@@ -23,7 +23,7 @@ const Home = () => {
   const classes = useStyles();
   const history = useHistory();
   const [restaurants, setRestaurants] = useState([]);
-  const { searchKey } = useContext(AppContext);
+  const { searchKey, setCurrentRoute } = useContext(AppContext);
 
   useEffect(() => {
     if (searchKey) {
@@ -35,6 +35,7 @@ const Home = () => {
 
   useEffect(() => {
     listRestaurants();
+    setCurrentRoute("/");
   }, []);
 
   const handleDetail = (restaurantId) => {

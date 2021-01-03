@@ -14,7 +14,7 @@ const HotalDetailSection = ({
   customer_rating,
   average_price,
   address: { locality },
-  getCategory,
+  getCategory
 }) => {
   return (
     <div className="detail-container">
