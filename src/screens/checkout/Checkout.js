@@ -49,6 +49,15 @@ const useStyles = makeStyles(theme => ({
   gridList: {
     flexWrap: "nowrap",
     transform: "translateZ(0)"
+  },
+  selectedAddress: {
+    margin: "30px",
+    boxShadow: "1px 1px 1px 3px #e83e8c",
+    padding: "10px !important"
+  },
+  address: {
+    margin: "30px",
+    padding: "10px !important"
   }
 }));
 
@@ -89,7 +98,9 @@ const Checkout = () => {
   const [snackPack, setSnackPack] = useState([]);
   const [open, setOpen] = useState(false);
   const [messageInfo, setMessageInfo] = useState(undefined);
-  const [addressList, setAddressList] = useState(DATA.addresses);
+  const [addressList, setAddressList] = useState(DATA.addresse || []);
+  const [selectedAddress, setSelectedAddress] = useState({});
+
   const steps = ["Delivery", "Payment"];
   const {
     location: { state }
@@ -200,26 +211,49 @@ const Checkout = () => {
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0} className={classes.root}>
-              <GridList
-                cols={3}
-                cellHeight={"auto"}
-                className={classes.gridList}
-              >
-                {addressList.map(address => {
-                  return (
-                    <GridListTile cellHeight={350} key={address.id}>                      
-                      <Typography>{address.flat_building_name}</Typography>
-                      <Typography>{address.locality}</Typography>
-                      <Typography>{address.city}</Typography>
-                      <Typography>{address.state.state_name}</Typography>
-                      <Typography>{address.pincode}</Typography>
-                      <span className="CheckBox">
-                        <CheckCircleIcon />
-                      </span>
-                    </GridListTile>
-                  );
-                })}
-              </GridList>
+              {addressList && addressList.length > 0 ? (
+                <GridList
+                  cols={3}
+                  cellHeight={"auto"}
+                  className={classes.gridList}
+                >
+                  {addressList.map(address => {
+                    return (
+                      <GridListTile
+                        cellHeight={350}
+                        key={address.id}
+                        onClick={() => setSelectedAddress(address)}
+                        className={
+                          selectedAddress.id === address.id
+                            ? classes.selectedAddress
+                            : classes.address
+                        }
+                      >
+                        <Typography>{address.flat_building_name}</Typography>
+                        <Typography>{address.locality}</Typography>
+                        <Typography>{address.city}</Typography>
+                        <Typography>{address.state.state_name}</Typography>
+                        <Typography>{address.pincode}</Typography>
+                        <FormHelperText className="CheckBox">
+                          <CheckCircleIcon
+                            style={{
+                              color:
+                                selectedAddress.id === address.id
+                                  ? "green"
+                                  : "grey"
+                            }}
+                          />
+                        </FormHelperText >
+                      </GridListTile>
+                    );
+                  })}
+                </GridList>
+              ) : (
+                <FormHelperText>
+                  There are no saved addresses! You can save an address using
+                  the 'New Address' tab or using your ‘Profile’ menu option.
+                </FormHelperText>
+              )}
             </TabPanel>
             <TabPanel value={value} index={1}>
               <div>
