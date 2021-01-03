@@ -30,7 +30,7 @@ import AppContext from "../../common/app-context";
 import "./Details.css";
 
 const Details = () => {
-  const { setCurrentRoute, setCartDetails } = useContext(AppContext);
+  const { setCurrentRoute } = useContext(AppContext);
   const { restaurantID } = useParams();
   const history = useHistory();
   const [restaurant, setRestaurant] = useState({});
@@ -101,8 +101,7 @@ const Details = () => {
       myCartItem.itemList.push(currentCartItem);
     }
     snackBarHandler("Item added to cart!");
-    setCartItem({ ...myCartItem });
-    setCartDetails({ ...myCartItem });
+    setCartItem({ ...myCartItem });    
   };
 
   // Removing item from cart
@@ -139,8 +138,7 @@ const Details = () => {
       myCartItem.totalItemCount = myCartItem.totalItemCount + 1;
     }
     myCartItem.itemList[index] = findItem;
-    setCartItem({ ...myCartItem });
-    setCartDetails({ ...myCartItem });
+    setCartItem({ ...myCartItem });    
   };
 
   const checkoutCart = () => {
@@ -149,7 +147,10 @@ const Details = () => {
     } else if (cartItem && cartItem.itemList && cartItem.itemList.length > 0) {
       let token = sessionStorage.getItem("access-token");
       if (token) {
-        history.push("/checkout");
+        history.push({
+          pathname: '/checkout',
+          state: { ...cartItem }
+        })        
       } else {
         snackBarHandler("Please login first!");
       }
@@ -332,11 +333,7 @@ const Details = () => {
                     </Typography>
                   </div>
                   <CardActions className="p-0">
-                    <Button
-                      onClick={() => { history.push({
-                        pathname: '/checkout',
-                        state: { ...cartItem }
-                      }) }}
+                    <Button                  
                       className="m-3 w-100"
                       variant="contained"
                       color="primary"

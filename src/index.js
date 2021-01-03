@@ -10,8 +10,7 @@ import { AppProvider } from "./common/app-context";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchKey, setSearchKey] = useState("");
-  const [currentRoute, setCurrentRoute] = useState("");
-  const [cartDetails, setCartDetails] = useState({});
+  const [currentRoute, setCurrentRoute] = useState("");  
 
   return (
     <AppProvider
@@ -21,9 +20,7 @@ const App = () => {
         isLoggedIn,
         setIsLoggedIn,
         currentRoute,
-        setCurrentRoute,
-        cartDetails,
-        setCartDetails
+        setCurrentRoute       
       }}
     >
       <AppRouter />
