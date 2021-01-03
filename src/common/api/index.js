@@ -69,3 +69,14 @@ export const createAddress = data => {
     body: JSON.stringify(data)
   }).then(res => res.json());
 };
+
+export const createOrder = data => {
+  return fetch(`${BASE_URL}/api/order`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "Bearer " + getApiToken()
+    },
+    body: JSON.stringify(data)
+  }).then(res => res.json());
+};

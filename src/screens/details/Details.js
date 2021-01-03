@@ -37,7 +37,7 @@ const Details = () => {
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [cartItem, setCartItem] = useState({
-    restaurant: restaurant.restaurant_name || '',
+    restaurant: restaurant.restaurant_name || "",
     itemList: [],
     totalPrice: 0,
     totalItemCount: 0
@@ -63,13 +63,13 @@ const Details = () => {
 
   const addToCart = (item, category) => {
     const myCartItem = cartItem || {
-      restaurant: restaurant.restaurant_name || '',
+      restaurant: restaurant.restaurant_name || "",
       itemList: [],
       totalPrice: 0,
       totalItemCount: 0
     };
     let findIndex = null;
-    myCartItem.restaurant = restaurant.restaurant_name || '';
+    myCartItem.restaurant = restaurant.restaurant_name || "";
     //If the item is new, not already added into the list, then insert newly
     let findItem = myCartItem.itemList.find((cartItemCurrent, index) => {
       if (cartItemCurrent.item.id === item.id) {
@@ -101,7 +101,7 @@ const Details = () => {
       myCartItem.itemList.push(currentCartItem);
     }
     snackBarHandler("Item added to cart!");
-    setCartItem({ ...myCartItem });    
+    setCartItem({ ...myCartItem });
   };
 
   // Removing item from cart
@@ -138,7 +138,7 @@ const Details = () => {
       myCartItem.totalItemCount = myCartItem.totalItemCount + 1;
     }
     myCartItem.itemList[index] = findItem;
-    setCartItem({ ...myCartItem });    
+    setCartItem({ ...myCartItem });
   };
 
   const checkoutCart = () => {
@@ -148,9 +148,9 @@ const Details = () => {
       let token = sessionStorage.getItem("access-token");
       if (token) {
         history.push({
-          pathname: '/checkout',
-          state: { ...cartItem }
-        })        
+          pathname: "/checkout",
+          state: { ...cartItem, restaurantID: restaurantID }
+        });
       } else {
         snackBarHandler("Please login first!");
       }
@@ -333,7 +333,7 @@ const Details = () => {
                     </Typography>
                   </div>
                   <CardActions className="p-0">
-                    <Button                  
+                    <Button
                       className="m-3 w-100"
                       variant="contained"
                       color="primary"

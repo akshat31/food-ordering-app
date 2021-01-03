@@ -34,7 +34,12 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { capitalizeFirstLetter } from "../../common/utils";
-import { commonGetFetch, getAllAddress, createAddress } from "../../common/api";
+import {
+  commonGetFetch,
+  getAllAddress,
+  createAddress,
+  createOrder
+} from "../../common/api";
 import { makePreciseValue } from "../../common/utils";
 
 // CSS
@@ -100,13 +105,15 @@ const Checkout = () => {
   const [addressList, setAddressList] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState({});
   const [selectedPayment, setSelectedPayment] = useState({});
+  const [discount, setDiscount] = useState(0);
+  const [coupon, setCoupon] = useState({});
 
   const steps = ["Delivery", "Payment"];
   const {
     location: { state }
   } = useHistory();
 
-  const { itemList, restaurant, totalPrice } = state;
+  const { itemList, restaurant, totalPrice, restaurantID } = state;
 
   useEffect(() => {
     getAllUserAddress();
@@ -438,6 +445,37 @@ const Checkout = () => {
       }
     });
   };
+
+  const placeOrder = () => {
+    let payload = {
+      address_id: selectedAddress.id,
+      bill: totalPrice,
+      discount: discount,
+      item_quantities: itemList.map(item => {
+        return {
+          item_id: item.item.id,
+          price: item.item.price,
+          quantity: item.quantity
+        };
+      }),
+      payment_id: selectedPayment.id,
+      restaurant_id: restaurantID
+    };
+    if (discount > 0) {
+      payload["discount"] = discount;
+      payload["coupon_id"] = coupon.id;
+    }
+
+    createOrder(payload).then(response => {
+      if (response.code) {
+        handleClick(response.message);
+      } else {
+        handleClick(
+          `Order placed successfully! Your order ID is ${response.id}.`
+        );
+      }
+    });
+  };
   return (
     <>
       <div className="container-fluid">
@@ -554,9 +592,7 @@ const Checkout = () => {
                   style={{ width: "100%" }}
                   variant="contained"
                   color="primary"
-                  onClick={handleClick(
-                    "Order placed successfully! Your order ID is {orderID}."
-                  )}
+                  onClick={placeOrder}
                 >
                   Place Order
                 </Button>
