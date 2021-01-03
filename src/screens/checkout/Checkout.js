@@ -85,6 +85,7 @@ const Checkout = () => {
   });
   const [stateList, setStateList] = useState({});
   const [paymentType, setPaymentType] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   const [snackPack, setSnackPack] = useState([]);
   const [open, setOpen] = useState(false);
   const [messageInfo, setMessageInfo] = useState(undefined);
@@ -177,6 +178,11 @@ const Checkout = () => {
         ...address,
         [e.target.name]: e.target.value
       });
+      setFormErrors({
+        ...formErrors,
+        [e.target.name]: false,
+        inValidPincode: false
+      });
     };
 
     switch (step) {
@@ -201,8 +207,7 @@ const Checkout = () => {
               >
                 {addressList.map(address => {
                   return (
-                    <GridListTile cellHeight={350} key={address.id}>
-                      <Typography>{address.pincode}</Typography>
+                    <GridListTile cellHeight={350} key={address.id}>                      
                       <Typography>{address.flat_building_name}</Typography>
                       <Typography>{address.locality}</Typography>
                       <Typography>{address.city}</Typography>
@@ -230,8 +235,10 @@ const Checkout = () => {
                         value={address.flat}
                         onChange={handleAddress}
                       />
-                      <FormHelperText className="invisible">
-                        <span className="red">required</span>
+                      <FormHelperText error={formErrors.flat}>
+                        {formErrors.flat && (
+                          <span className="red"> required</span>
+                        )}
                       </FormHelperText>
                     </FormControl>
                     <FormControl required>
@@ -241,8 +248,10 @@ const Checkout = () => {
                         value={address.locality}
                         onChange={handleAddress}
                       />
-                      <FormHelperText className="invisible">
-                        <span className="red">required</span>
+                      <FormHelperText error={formErrors.locality}>
+                        {formErrors.locality && (
+                          <span className="red"> required</span>
+                        )}
                       </FormHelperText>
                     </FormControl>
                     <FormControl required>
@@ -252,8 +261,10 @@ const Checkout = () => {
                         value={address.city}
                         onChange={handleAddress}
                       />
-                      <FormHelperText className="invisible">
-                        <span className="red">required</span>
+                      <FormHelperText error={formErrors.city}>
+                        {formErrors.city && (
+                          <span className="red"> required</span>
+                        )}
                       </FormHelperText>
                     </FormControl>
                     <FormControl required className="formControl">
@@ -263,7 +274,7 @@ const Checkout = () => {
                         value={address.state}
                         onChange={handleAddress}
                       >
-                        {(stateList && stateList.states || []).map(res => {
+                        {((stateList && stateList.states) || []).map(res => {
                           return (
                             <MenuItem value={res.id} key={res}>
                               {res.state_name}
@@ -271,8 +282,10 @@ const Checkout = () => {
                           );
                         })}
                       </Select>
-                      <FormHelperText className="invisible">
-                        <span className="red">required</span>
+                      <FormHelperText error={formErrors.state}>
+                        {formErrors.state && (
+                          <span className="red"> required</span>
+                        )}
                       </FormHelperText>
                     </FormControl>
                     <FormControl required>
@@ -282,11 +295,18 @@ const Checkout = () => {
                         value={address.pincode}
                         onChange={handleAddress}
                       />
-                      <FormHelperText className="invisible">
-                        <span className="red">
-                          Pincode must contain only numbers and must be 6 digits
-                          long
-                        </span>
+                      <FormHelperText error={formErrors.pincode}>
+                        {formErrors.pincode && (
+                          <span className="red"> required</span>
+                        )}
+                      </FormHelperText>
+                      <FormHelperText error={formErrors.inValidPincode}>
+                        {formErrors.inValidPincode && (
+                          <span className="red">
+                            Pincode must contain only numbers and must be 6
+                            digits long
+                          </span>
+                        )}
                       </FormHelperText>
                     </FormControl>
                     <br />
@@ -339,6 +359,23 @@ const Checkout = () => {
   };
 
   const addAddressHandler = () => {
+    if (
+      !address.flat ||
+      !address.city ||
+      !address.locality ||
+      !address.pincode ||
+      !address.state
+    ) {
+      setFormErrors({
+        city: !address.city,
+        flat: !address.flat,
+        locality: !address.locality,
+        pincode: !address.pincode,
+        state: !address.state
+      });
+      return;
+    }
+
     let payload = {
       city: address.city,
       flat_building_name: address.flat,
@@ -348,7 +385,12 @@ const Checkout = () => {
     };
     createAddress(payload).then(response => {
       if (response.code) {
+        setFormErrors({
+          ...formErrors,
+          inValidPincode: response.message
+        });
       } else {
+        setValue(0);
         getAllUserAddress();
       }
     });
