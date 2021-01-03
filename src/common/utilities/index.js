@@ -12,3 +12,11 @@ export const isValidPassword = password => {
   const patt = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
   return patt.test(password);
 };
+
+export const getApiToken = () => {
+  let token = sessionStorage.getItem("access-token");
+  if (token) {
+    return token;
+  }
+  return null;
+};

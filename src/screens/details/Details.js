@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
+
 // Material UI
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -29,14 +30,14 @@ import AppContext from "../../common/app-context";
 import "./Details.css";
 
 const Details = () => {
-  const { setCurrentRoute, setCartDetails } = useContext(AppContext);
+  const { setCurrentRoute } = useContext(AppContext);
   const { restaurantID } = useParams();
   const history = useHistory();
   const [restaurant, setRestaurant] = useState({});
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [cartItem, setCartItem] = useState({
-    restaurant: null,
+    restaurant: restaurant.restaurant_name || "",
     itemList: [],
     totalPrice: 0,
     totalItemCount: 0
@@ -62,12 +63,13 @@ const Details = () => {
 
   const addToCart = (item, category) => {
     const myCartItem = cartItem || {
-      restaurant: "resData",
+      restaurant: restaurant.restaurant_name || "",
       itemList: [],
       totalPrice: 0,
       totalItemCount: 0
     };
     let findIndex = null;
+    myCartItem.restaurant = restaurant.restaurant_name || "";
     //If the item is new, not already added into the list, then insert newly
     let findItem = myCartItem.itemList.find((cartItemCurrent, index) => {
       if (cartItemCurrent.item.id === item.id) {
@@ -100,7 +102,6 @@ const Details = () => {
     }
     snackBarHandler("Item added to cart!");
     setCartItem({ ...myCartItem });
-    setCartDetails({ ...myCartItem });
   };
 
   // Removing item from cart
@@ -138,7 +139,6 @@ const Details = () => {
     }
     myCartItem.itemList[index] = findItem;
     setCartItem({ ...myCartItem });
-    setCartDetails({ ...myCartItem });
   };
 
   const checkoutCart = () => {
@@ -147,7 +147,10 @@ const Details = () => {
     } else if (cartItem && cartItem.itemList && cartItem.itemList.length > 0) {
       let token = sessionStorage.getItem("access-token");
       if (token) {
-        history.push("/checkout");
+        history.push({
+          pathname: "/checkout",
+          state: { ...cartItem, restaurantID: restaurantID }
+        });
       } else {
         snackBarHandler("Please login first!");
       }

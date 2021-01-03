@@ -5,8 +5,8 @@ import { login } from "../../api";
 import { isValidMobileNumber } from "../../utilities";
 
 const Login = ({ onLogin }) => {
-  const [contactnumber, setContactNumber] = useState("9962299089");
-  const [password, setPassword] = useState("Mani@1234");
+  const [contactnumber, setContactNumber] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState({
     login: false,
     contactNumber: false,
