@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 
 // Material UI
 import { makeStyles } from "@material-ui/core/styles";
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem from "@material-ui/core/MenuItem";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -34,24 +34,25 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { capitalizeFirstLetter } from "../../common/utils";
-import { commonGetFetch } from "../../common/api";
+import { commonGetFetch, getAllAddress, createAddress } from "../../common/api";
 import { makePreciseValue } from "../../common/utils";
 
 // CSS
 import "./Checkout.css";
+import { DATA } from "../../common/api/mock";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   },
   gridList: {
     flexWrap: "nowrap",
-    transform: "translateZ(0)",
-  },
+    transform: "translateZ(0)"
+  }
 }));
 
-const TabPanel = (props) => {
+const TabPanel = props => {
   const { children, value, index, ...other } = props;
   return (
     <div
@@ -68,7 +69,7 @@ const TabPanel = (props) => {
       )}
     </div>
   );
-}
+};
 
 const Checkout = () => {
   const classes = useStyles();
@@ -80,52 +81,62 @@ const Checkout = () => {
     city: "",
     state: "",
     pincode: "",
-    payment: ''
+    payment: ""
   });
   const [stateList, setStateList] = useState({});
   const [paymentType, setPaymentType] = useState({});
   const [snackPack, setSnackPack] = useState([]);
   const [open, setOpen] = useState(false);
   const [messageInfo, setMessageInfo] = useState(undefined);
+  const [addressList, setAddressList] = useState(DATA.addresses);
   const steps = ["Delivery", "Payment"];
   const {
-    location: { state },
+    location: { state }
   } = useHistory();
+
   const { itemList, restaurant, totalPrice } = state;
 
-  useEffect(
-    () => {
-      if (snackPack.length && !messageInfo) {
-        // Set a new snack when we don't have an active one
-        setMessageInfo({ ...snackPack[0] });
-        setSnackPack((prev) => prev.slice(1));
-        setOpen(true);
-      } else if (snackPack.length && messageInfo && open) {
-        // Close an active snack when a new one is added
-        setOpen(false);
-      }
+  useEffect(() => {
+    getAllUserAddress();
+  }, []);
 
-      commonGetFetch('states').then((response) => {
-        setStateList(response);
-      });
+  useEffect(() => {
+    if (snackPack.length && !messageInfo) {
+      // Set a new snack when we don't have an active one
+      setMessageInfo({ ...snackPack[0] });
+      setSnackPack(prev => prev.slice(1));
+      setOpen(true);
+    } else if (snackPack.length && messageInfo && open) {
+      // Close an active snack when a new one is added
+      setOpen(false);
+    }
 
-      commonGetFetch('payment').then((response) => {
-        setPaymentType(response);
-      });
-    },
-    [snackPack, messageInfo, open]
-  );
+    commonGetFetch("states").then(response => {
+      setStateList(response);
+    });
+
+    commonGetFetch("payment").then(response => {
+      setPaymentType(response);
+    });
+  }, [snackPack, messageInfo, open]);
+
+  const getAllUserAddress = () => {
+    getAllAddress().then(response => {
+      setAddressList(response.addresses || []);
+      setValue(0);
+    });
+  };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
   const handleReset = () => {
     setActiveStep(0);
   };
 
-  const handleClick = (message) => () => {
-    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+  const handleClick = message => () => {
+    setSnackPack(prev => [...prev, { message, key: new Date().getTime() }]);
   };
 
   const handleClose = (event, reason) => {
@@ -139,38 +150,32 @@ const Checkout = () => {
     setMessageInfo(undefined);
   };
 
-  const getStateArrayList = () => {
-    return (stateList.states || []).map((res) => {
-      return res.state_name;
-    })
-  }
-
   const getPaymentMethodArrayList = () => {
-    return (paymentType.paymentMethods || []).map((res) => {
+    return (paymentType.paymentMethods || []).map(res => {
       return res.payment_name;
-    })
-  }
-
-  const a11yProps = (index) => {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-    };
-  }
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    });
   };
 
-  const getStepContent = (step) => {
+  const a11yProps = index => {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`
+    };
+  };
+
+  const handleNext = () => {
+    setActiveStep(prevActiveStep => prevActiveStep + 1);
+  };
+
+  const getStepContent = step => {
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
 
-    const handleAddress = (e) => {
+    const handleAddress = e => {
       setAddress({
         ...address,
-        [e.target.name]: e.target.value,
+        [e.target.name]: e.target.value
       });
     };
 
@@ -194,52 +199,21 @@ const Checkout = () => {
                 cellHeight={"auto"}
                 className={classes.gridList}
               >
-                <GridListTile cellHeight={350}>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <span className="CheckBox">
-                    <CheckCircleIcon />
-                  </span>
-                </GridListTile>
-                <GridListTile cellHeight={350}>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <span className="CheckBox">
-                    <CheckCircleIcon />
-                  </span>
-                </GridListTile>
-                <GridListTile cellHeight={350}>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <span className="CheckBox">
-                    <CheckCircleIcon />
-                  </span>
-                </GridListTile>
-                <GridListTile cellHeight={350}>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <Typography>Jansi, 1603</Typography>
-                  <span className="CheckBox">
-                    <CheckCircleIcon />
-                  </span>
-                </GridListTile>
+                {addressList.map(address => {
+                  return (
+                    <GridListTile cellHeight={350} key={address.id}>
+                      <Typography>{address.pincode}</Typography>
+                      <Typography>{address.flat_building_name}</Typography>
+                      <Typography>{address.locality}</Typography>
+                      <Typography>{address.city}</Typography>
+                      <Typography>{address.state.state_name}</Typography>
+                      <Typography>{address.pincode}</Typography>
+                      <span className="CheckBox">
+                        <CheckCircleIcon />
+                      </span>
+                    </GridListTile>
+                  );
+                })}
               </GridList>
             </TabPanel>
             <TabPanel value={value} index={1}>
@@ -285,17 +259,17 @@ const Checkout = () => {
                     <FormControl required className="formControl">
                       <InputLabel htmlFor="showDate">Choose State:</InputLabel>
                       <Select
-                        name='state'
+                        name="state"
                         value={address.state}
                         onChange={handleAddress}
                       >
-                        {
-                          (getStateArrayList() || []).map((res) => {
-                            return(
-                              <MenuItem value={res}>{res}</MenuItem>
-                            )
-                          })
-                        }
+                        {(stateList && stateList.states || []).map(res => {
+                          return (
+                            <MenuItem value={res.id} key={res}>
+                              {res.state_name}
+                            </MenuItem>
+                          );
+                        })}
                       </Select>
                       <FormHelperText className="invisible">
                         <span className="red">required</span>
@@ -320,7 +294,7 @@ const Checkout = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick="addAddressHandler"
+                    onClick={addAddressHandler}
                   >
                     SAVE ADDRESS
                   </Button>
@@ -336,24 +310,25 @@ const Checkout = () => {
         return (
           <div>
             <FormControl component="fieldset">
-              <FormLabel className='text-primary my-3 pt-3' component="legend">Select Mode of Payment</FormLabel>
+              <FormLabel className="text-primary my-3 pt-3" component="legend">
+                Select Mode of Payment
+              </FormLabel>
               <RadioGroup
                 aria-label="payment"
                 name="payment"
                 payment={address.payment}
                 onChange={handleAddress}
               >
-                {
-                  (getPaymentMethodArrayList() || []).map((res) => {
-                      return (
-                        <FormControlLabel
-                          value={res}
-                          control={<Radio />}
-                          label={res}
-                        />
-                      )
-                  })
-                }
+                {(getPaymentMethodArrayList() || []).map(res => {
+                  return (
+                    <FormControlLabel
+                      value={res}
+                      control={<Radio />}
+                      label={res}
+                      key={res}
+                    />
+                  );
+                })}
               </RadioGroup>
             </FormControl>
           </div>
@@ -361,8 +336,23 @@ const Checkout = () => {
       default:
         return "Unknown step";
     }
-  }
+  };
 
+  const addAddressHandler = () => {
+    let payload = {
+      city: address.city,
+      flat_building_name: address.flat,
+      locality: address.locality,
+      pincode: address.pincode,
+      state_uuid: address.state
+    };
+    createAddress(payload).then(response => {
+      if (response.code) {
+      } else {
+        getAllUserAddress();
+      }
+    });
+  };
   return (
     <>
       <div className="container-fluid">
@@ -427,7 +417,7 @@ const Checkout = () => {
                                       color:
                                         item.item.item_type === "VEG"
                                           ? "green"
-                                          : "red",
+                                          : "red"
                                     }}
                                     aria-hidden="true"
                                   />
@@ -484,7 +474,7 @@ const Checkout = () => {
                   key={messageInfo ? messageInfo.key : undefined}
                   anchorOrigin={{
                     vertical: "bottom",
-                    horizontal: "left",
+                    horizontal: "left"
                   }}
                   open={open}
                   autoHideDuration={6000}
@@ -492,13 +482,13 @@ const Checkout = () => {
                   onExited={handleExited}
                   message={messageInfo ? messageInfo.message : undefined}
                   action={
-                      <IconButton
-                        aria-label="close"
-                        color="inherit"
-                        onClick={handleClose}
-                      >
-                        <CloseIcon />
-                      </IconButton>
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      onClick={handleClose}
+                    >
+                      <CloseIcon />
+                    </IconButton>
                   }
                 />
               </CardContent>
