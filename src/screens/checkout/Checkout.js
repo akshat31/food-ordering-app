@@ -98,8 +98,9 @@ const Checkout = () => {
   const [snackPack, setSnackPack] = useState([]);
   const [open, setOpen] = useState(false);
   const [messageInfo, setMessageInfo] = useState(undefined);
-  const [addressList, setAddressList] = useState(DATA.addresse || []);
+  const [addressList, setAddressList] = useState(DATA.addresses || []);
   const [selectedAddress, setSelectedAddress] = useState({});
+  const [selectedPayment, setSelectedPayment] = useState({});
 
   const steps = ["Delivery", "Payment"];
   const {
@@ -164,7 +165,7 @@ const Checkout = () => {
 
   const getPaymentMethodArrayList = () => {
     return (paymentType.paymentMethods || []).map(res => {
-      return res.payment_name;
+      return res;
     });
   };
 
@@ -243,7 +244,7 @@ const Checkout = () => {
                                   : "grey"
                             }}
                           />
-                        </FormHelperText >
+                        </FormHelperText>
                       </GridListTile>
                     );
                   })}
@@ -377,9 +378,18 @@ const Checkout = () => {
                   return (
                     <FormControlLabel
                       value={res}
-                      control={<Radio />}
-                      label={res}
-                      key={res}
+                      onChange={() => setSelectedPayment(res)}
+                      control={
+                        <Radio
+                          checked={
+                            (selectedPayment &&
+                              selectedPayment.id === res.id) ||
+                            false
+                          }
+                        />
+                      }
+                      label={res.payment_name}
+                      key={res.id}
                     />
                   );
                 })}
@@ -452,6 +462,10 @@ const Checkout = () => {
                           variant="contained"
                           color="primary"
                           onClick={handleNext}
+                          disabled={
+                            activeStep === steps.length - 1 &&
+                            !selectedPayment.payment_name
+                          }
                         >
                           {activeStep === steps.length - 1 ? "Finish" : "Next"}
                         </Button>
