@@ -39,7 +39,6 @@ import { makePreciseValue } from "../../common/utils";
 
 // CSS
 import "./Checkout.css";
-import { DATA } from "../../common/api/mock";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -98,7 +97,7 @@ const Checkout = () => {
   const [snackPack, setSnackPack] = useState([]);
   const [open, setOpen] = useState(false);
   const [messageInfo, setMessageInfo] = useState(undefined);
-  const [addressList, setAddressList] = useState(DATA.addresses || []);
+  const [addressList, setAddressList] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState({});
   const [selectedPayment, setSelectedPayment] = useState({});
 
@@ -463,8 +462,9 @@ const Checkout = () => {
                           color="primary"
                           onClick={handleNext}
                           disabled={
-                            activeStep === steps.length - 1 &&
-                            !selectedPayment.payment_name
+                            (activeStep === steps.length - 1 &&
+                              !selectedPayment.payment_name) ||
+                            addressList.length === 0
                           }
                         >
                           {activeStep === steps.length - 1 ? "Finish" : "Next"}
