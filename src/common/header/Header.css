@@ -21,7 +21,7 @@
 .ReactModal__Content--after-open {
   width: 400px;
   margin: auto;
-  top: 10% !important;
+  top: -10% !important;
   height: fit-content;
 }
 .MuiAppBar-colorDefault {
@@ -32,4 +32,13 @@
 }
 .avatar-menu .MuiButton-root {
   color: grey;
+}
+
+@media (max-width: 575.98px) {
+  .header-container > * {
+    margin-bottom: 10px;
+  }
+  .header-container .MuiFormControl-root {
+    margin-bottom: 10px;
+  }
 }

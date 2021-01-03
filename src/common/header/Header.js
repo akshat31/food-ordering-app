@@ -52,9 +52,13 @@ function a11yProps(index) {
 }
 
 const Header = () => {
-  const { searchKey, setSearchKey, isLoggedIn, setIsLoggedIn } = useContext(
-    AppContext
-  );
+  const {
+    searchKey,
+    setSearchKey,
+    isLoggedIn,
+    setIsLoggedIn,
+    currentRoute
+  } = useContext(AppContext);
   const history = useHistory();
   const [isOpen, setIsOpen] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -106,7 +110,7 @@ const Header = () => {
     setIsLoggedIn(false);
     sessionStorage.removeItem("userDetails");
     sessionStorage.removeItem("access-token");
-    history.push("/home");
+    history.push("/");
     handleClose();
   };
 
@@ -114,17 +118,19 @@ const Header = () => {
     <>
       <div className="header-container">
         <FastfoodIcon style={{ color: "#FFF" }} />
-        <TextField
-          id="outlined-basic"
-          className="search-box"
-          placeholder="Search by Restaurant Name"
-          variant="standard"
-          value={searchKey}
-          onChange={event => setSearchKey(event.target.value)}
-          InputProps={{
-            startAdornment: <SearchIcon style={{ color: "#FFF" }} />
-          }}
-        />
+        {currentRoute === "/" && (
+          <TextField
+            id="outlined-basic"
+            className="search-box"
+            placeholder="Search by Restaurant Name"
+            variant="standard"
+            value={searchKey}
+            onChange={event => setSearchKey(event.target.value)}
+            InputProps={{
+              startAdornment: <SearchIcon style={{ color: "#FFF" }} />
+            }}
+          />
+        )}
         {isLoggedIn ? (
           <div className="avatar-menu">
             <Button

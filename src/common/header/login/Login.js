@@ -39,7 +39,7 @@ const Login = ({ onLogin }) => {
         if (response.code) {
           setError({
             ...error,
-            login: true
+            login: response.message
           });
         } else {
           onLogin(response);
@@ -68,7 +68,7 @@ const Login = ({ onLogin }) => {
                   ...error,
                   login: false,
                   contactNumber: false,
-                  invalidcontactNumber:false
+                  invalidcontactNumber: false
                 });
                 setContactNumber(event.target.value);
               }}
@@ -98,11 +98,7 @@ const Login = ({ onLogin }) => {
             />
             {error.password && <span className="error-message">required</span>}
           </FormControl>
-          {error.login && (
-            <span className="error-message">
-              This contact number has not been registered!
-            </span>
-          )}
+          {error.login && <span className="error-message">{error.login}</span>}
           <div className="btn-container">
             <Button
               variant="contained"

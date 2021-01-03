@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import 'font-awesome/css/font-awesome.min.css';
+import "font-awesome/css/font-awesome.min.css";
 import "./index.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import * as serviceWorker from "./serviceWorker";
 import AppRouter from "./common/router";
 import { AppProvider } from "./common/app-context";
@@ -10,7 +10,8 @@ import { AppProvider } from "./common/app-context";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchKey, setSearchKey] = useState("");
-  const [currentRoute, setCurrentRoute] = useState("/");
+  const [currentRoute, setCurrentRoute] = useState("");
+  const [cartDetails, setCartDetails] = useState({});
 
   return (
     <AppProvider
@@ -20,7 +21,9 @@ const App = () => {
         isLoggedIn,
         setIsLoggedIn,
         currentRoute,
-        setCurrentRoute
+        setCurrentRoute,
+        cartDetails,
+        setCartDetails
       }}
     >
       <AppRouter />

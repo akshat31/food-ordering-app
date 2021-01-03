@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 
 // Material UI
@@ -24,12 +24,14 @@ import AddIcon from "@material-ui/icons/Add";
 import { capitalizeFirstLetter } from "../../common/utils";
 import { getRestaurantById } from "../../common/api";
 import { makePreciseValue } from "../../common/utils";
+import AppContext from "../../common/app-context";
 
 // CSS
 import "./Details.css";
 
 const Details = () => {
-  const { id } = useParams();
+  const { setCurrentRoute, setCartDetails } = useContext(AppContext);
+  const { restaurantID } = useParams();
   const history = useHistory();
   const [restaurant, setRestaurant] = useState({});
   const [snackBarOpen, setSnackBarOpen] = useState(false);
@@ -38,25 +40,23 @@ const Details = () => {
     restaurant: restaurant.restaurant_name || '',
     itemList: [],
     totalPrice: 0,
-    totalItemCount: 0,
+    totalItemCount: 0
   });
 
-  useEffect(
-    () => {
-      getRestaurantById(id).then((res) => {
-        setRestaurant(res);
-      });
-    },
-    [id]
-  );
+  useEffect(() => {
+    getRestaurantById(restaurantID).then(res => {
+      setRestaurant(res);
+    });
+    setCurrentRoute(`/restaurant/${restaurantID}`);
+  }, [restaurantID]);
 
-  const getCategory = (resCategory) => {
-    const categoryName = resCategory.map((res) => res.category_name);
+  const getCategory = resCategory => {
+    const categoryName = resCategory.map(res => res.category_name);
     return categoryName.join(", ");
   };
 
   //SnackBar handler both open and close function
-  const snackBarHandler = (message) => {
+  const snackBarHandler = message => {
     setSnackBarMessage(message);
     setSnackBarOpen(true);
   };
@@ -66,7 +66,7 @@ const Details = () => {
       restaurant: restaurant.restaurant_name || '',
       itemList: [],
       totalPrice: 0,
-      totalItemCount: 0,
+      totalItemCount: 0
     };
     let findIndex = null;
     myCartItem.restaurant = restaurant.restaurant_name || '';
@@ -93,7 +93,7 @@ const Details = () => {
         categoryName: category.category_name,
         categoryId: category.id,
         item: item,
-        totalItemPrice: item.price,
+        totalItemPrice: item.price
       };
       myCartItem.totalPrice = myCartItem.totalPrice + item.price;
       myCartItem.totalItemCount = myCartItem.totalItemCount + 1;
@@ -102,10 +102,11 @@ const Details = () => {
     }
     snackBarHandler("Item added to cart!");
     setCartItem({ ...myCartItem });
+    setCartDetails({ ...myCartItem });
   };
 
   // Removing item from cart
-  const removeAnItemFromCart = (index) => {
+  const removeAnItemFromCart = index => {
     const myCartItem = cartItem;
     // Match item based on index
     let findItem = myCartItem.itemList[index];
@@ -127,7 +128,7 @@ const Details = () => {
   };
 
   //Adding item from My Cart
-  const addAnItemFromCart = (index) => {
+  const addAnItemFromCart = index => {
     snackBarHandler("Item quantity increased by 1!");
     const myCartItem = cartItem;
     let findItem = myCartItem.itemList[index];
@@ -139,6 +140,20 @@ const Details = () => {
     }
     myCartItem.itemList[index] = findItem;
     setCartItem({ ...myCartItem });
+    setCartDetails({ ...myCartItem });
+  };
+
+  const checkoutCart = () => {
+    if (cartItem && cartItem.itemList && cartItem.itemList.length === 0) {
+      snackBarHandler("Please add an item to your cart!");
+    } else if (cartItem && cartItem.itemList && cartItem.itemList.length > 0) {
+      let token = sessionStorage.getItem("access-token");
+      if (token) {
+        history.push("/checkout");
+      } else {
+        snackBarHandler("Please login first!");
+      }
+    }
   };
 
   const { itemList = [], totalItemCount, totalPrice } = cartItem;
@@ -174,7 +189,7 @@ const Details = () => {
                                       color:
                                         item.item_type === "VEG"
                                           ? "green"
-                                          : "red",
+                                          : "red"
                                     }}
                                   />
                                 </div>
@@ -247,7 +262,7 @@ const Details = () => {
                                           color:
                                             item.item.item_type === "VEG"
                                               ? "green"
-                                              : "red",
+                                              : "red"
                                         }}
                                         aria-hidden="true"
                                       />
@@ -325,6 +340,7 @@ const Details = () => {
                       className="m-3 w-100"
                       variant="contained"
                       color="primary"
+                      onClick={checkoutCart}
                     >
                       Checkout
                     </Button>
